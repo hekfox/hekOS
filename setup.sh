@@ -1,16 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-# Colors for terminal output
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-
-print_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-print_success() { echo -e "${GREEN}[OK]${NC} $1"; }
-print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+# Shared colors, print_* helpers, retry_command, REPO_ROOT, etc.
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/install/utils.sh"
 
 # Dynamic version from Git Tags (fallbacks to v0-dev if not tagged)
 get_version() {
@@ -54,10 +46,10 @@ prompt_yn() {
 
 VERSION=$(get_version)
 
-# Resolve the repo root from this script's own location, not the caller's cwd
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-INSTALL_DIR="$SCRIPT_DIR/install"
-LOG_DIR="$SCRIPT_DIR/logs"
+# REPO_ROOT comes from utils.sh, resolved from its own location rather than
+# the caller's cwd or clone path.
+INSTALL_DIR="$REPO_ROOT/install"
+LOG_DIR="$REPO_ROOT/logs"
 LOG_FILE="$LOG_DIR/install-$(date +%Y%m%d-%H%M%S).log"
 mkdir -p "$LOG_DIR"
 
@@ -73,7 +65,7 @@ echo ""
 # --- SYSTEM UPDATE (Default: Yes) ---
 if prompt_yn "Do you want to update the system first? (Recommended: sudo pacman -Syu)" "y"; then
     print_info "Updating system packages..."
-    if sudo pacman -Syu --noconfirm; then
+    if retry_command sudo pacman -Syu --noconfirm; then
         print_success "System updated successfully."
     else
         print_warning "System update failed. Continuing anyway — you may want to resolve this manually."
