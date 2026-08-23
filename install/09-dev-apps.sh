@@ -30,7 +30,7 @@ install_pacman_apps pacman_apps get_flatpak_fallback
 aur_apps=(
     "antigravity-ide:An agentic development platform from Google, evolving the IDE into the agent-first era"
     "beekeeper-studio-bin:Modern and easy-to-use SQL GUI client and database manager"
-    "mongodb-compass:The official GUI for MongoDB database management"
+    "mongodb-compass-bin:The official GUI for MongoDB database management"
     "bruno-bin:Fast and git-friendly open-source API client"
     "postman-bin:API platform for building and testing APIs"
 )
