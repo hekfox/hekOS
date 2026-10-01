@@ -17,7 +17,14 @@ return {
         opts = {},
       },
       -- Maps LSP server names between nvim-lspconfig and Mason package names.
-      'mason-org/mason-lspconfig.nvim',
+      {
+        'mason-org/mason-lspconfig.nvim',
+        opts = {
+          automatic_enable = {
+            exclude = { 'tsc' },
+          },
+        },
+      },
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
@@ -121,19 +128,42 @@ return {
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --  See `:help lsp-config` for information about keys and how to configure
+      local vue_language_server_path = ''
+      local ok, mason_registry = pcall(require, 'mason-registry')
+      if ok and mason_registry.is_installed 'vue-language-server' then
+        vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path()
+          .. '/node_modules/@vue/language-server'
+      end
+
       ---@type table<string, vim.lsp.Config>
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+        -- TypeScript / JavaScript (NestJS, React, Drizzle, Astro y lógica de Vue)
+        ts_ls = {
+          init_options = {
+            plugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = vue_language_server_path,
+                languages = { 'vue' },
+              },
+            },
+          },
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+        },
+
+        -- Frameworks Frontend
+        astro = {},
+        vue_ls = {}, -- Vue 3 SFC (template, CSS scoped, directivas)
+
+        -- Marcado, Estilos y Utilidades Web
+        tailwindcss = {},
+        html = {},
+        cssls = {},
+        jsonls = {},
+        emmet_language_server = {},
+
+        -- Scripts de Linux (hekOS)
+        bashls = {},
 
         stylua = {}, -- Used to format Lua code
 
