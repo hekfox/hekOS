@@ -38,7 +38,9 @@ marker_file="$marker_dir/02-shell.initialized"
 
 if [ ! -f "$marker_file" ]; then
     print_info "Cleaning up old Neovim share data (first run)..."
-    rm -rf "$HOME/.local/share/nvim"
+    rm -rf ~/.local/share/nvim
+    rm -rf ~/.local/state/nvim
+    rm -rf ~/.cache/nvim
     mkdir -p "$marker_dir"
     touch "$marker_file"
 else

@@ -8,7 +8,9 @@ if command -v paru &> /dev/null; then
     print_success "awww installed."
 
     print_info "Setting initial wallpaper with awww..."
-    if [ -f "$HOME/.config/hypr/wallpapers/wallpaper-001.png" ]; then
+    WALLPAPER_PATH="$HOME/.config/hypr/wallpapers/wallpaper-001.png"
+
+    if [ -f "$WALLPAPER_PATH" ] && [ -e "$(readlink -f "$WALLPAPER_PATH")" ]; then
         # Check if awww-daemon is running, start it temporarily if not
         if ! pgrep -x "awww-daemon" > /dev/null; then
             print_info "Starting awww-daemon temporarily..."
@@ -16,7 +18,7 @@ if command -v paru &> /dev/null; then
             sleep 1
         fi
 
-        if awww img "$HOME/.config/hypr/wallpapers/wallpaper-001.png"; then
+        if awww img "$WALLPAPER_PATH"; then
             print_success "Initial wallpaper applied."
         else
             print_warning "Could not set wallpaper (is a Wayland session active?). It will apply automatically once you log into Hyprland."
